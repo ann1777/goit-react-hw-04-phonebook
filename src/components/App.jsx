@@ -1,102 +1,81 @@
-import { Component } from 'react';
+import { useState, useEffect } from 'react';
 import { Section } from './Section/Section';
 import { Title } from './Title/Title';
 import ContactsForm from './ContactsForm/ContactsForm';
-import { ContactsFilter } from './ContactsFilter/ContactsFilter';
-import { ContactList } from './ContactList/ContactList';
+import ContactsFilter from './ContactsFilter/ContactsFilter';
+import ContactList from './ContactList/ContactList';
 import { GlobalStyle } from './GlobalStyle';
-import PropTypes from 'prop-types';
-import data from './contacts.json';
+import { nanoid } from 'nanoid';
 import { ThemeProvider } from './ThemeProvider/ThemeProvider';
 import { theme } from './theme';
 
-const notifyOptions = {
-  position: 'bottom-left',
-  autoClose: 5000,
-  hideProgressBar: false,
-  closeOnClick: true,
-  pauseOnHover: true,
-  draggable: true,
-  progress: undefined,
-  theme: 'colored',
-};
-
-export default class App extends Component {
-  state = {
-    contacts: data,
-    filter: '',
-  };
-
-  static propTypes = {
-    addNewContact: PropTypes.func.isRequired,
-  };
-
-  onSubmitForm = e => {
-    e.preventDefault();
-    this.props.addNewContact(this.state);
-    this.resetForm();
-  };
-
-  resetForm = () => {
-    this.setState({ name: '', number: '' });
-  };
-
-   onAddContact = (newContact) => {
-    const { contacts } = this.state;
-    contacts.some(
-      contact =>
-      contact.name.toLowerCase().trim() ===
-      newContact.name.toLowerCase().trim() ||
-      contact.number.trim() === newContact.number.trim()
-    )
-     ? ContactList.error(`${newContact.name}: has already present in contacts`, notifyOptions)
-    : this.setState(prevState => {
-      return {
-        contacts: [newContact, ...prevState.contacts],
-      };
-    });
-  };
- 
-  onDeleteContact = id => {
-    this.setState(prevState => {     
-      return {
-        contacts: prevState.contacts.filter(contact => contact.id !== id),
-      };
-    });
-  };
-
-  onInputChange = e => {
-    this.setState({ filter: e.target.value });
-  };
-
-  getVisibleContacts = () => {
-    const { filter, contacts } = this.state;
-    const normalizedFilter = filter.toLowerCase();
-
-    return contacts.filter(contact =>
-      contact.name.toLowerCase().trim().includes(normalizedFilter)
-    );
-  };
-
-  render () {
-    const { contacts, filter } = this.state;
-    const visibleContacts = this.getVisibleContacts();
+function App() {
+  const [contacts, setContacts] = useState(() => {
     return (
-      <>
-        <ThemeProvider theme={theme}>
-          <Section>
-          <Title title='Phonebook' />
-            <ContactsForm addContact={this.onAddContact} newContact={contacts} />
-            <Title title='Contacts' />
-            <ContactsFilter value={filter} onChange={this.onInputChange} />
-          <ContactList
-            contacts={visibleContacts}
-            onDelete={this.onDeleteContact}
-          />
-          </Section>
-          <GlobalStyle />
-        </ThemeProvider>
-      </>
+      JSON.parse(localStorage.getItem('contacts')) ?? [
+        { id: 'id-1', name: 'Rosie Simpson', number: '459-12-56' },
+        { id: 'id-2', name: 'Hermione Kline', number: '443-89-12' },
+        { id: 'id-3', name: 'Eden Clements', number: '645-17-79' },
+        { id: 'id-4', name: 'Annie Copeland', number: '227-91-26' },
+      ]
     );
-  }
+  });
+
+  const [filter, setFilter] = useState('');
+
+  useEffect(() => {
+    localStorage.setItem('contacts', JSON.stringify(contacts));
+  }, [contacts]);
+
+  const onSubmitForm = (submitName, submitNumber) => {
+    if (filter) {
+      contacts.filter(
+        contact => contact.name.toLowerCase() === submitName.toLowerCase())
+        } 
+        else return alert(`${submitName} is already in contacts.`);
+        setContacts(state => [
+          ...state,
+          {
+            id: nanoid(),
+            name: submitName,
+            number: submitNumber,
+          },
+        ]);
+    };
+
+  const onFilteredContacts = () => {
+    if (filter) {
+      return contacts.filter(contact => {
+        return contact.name.toLowerCase().includes(filter.toLowerCase());
+      });
+    }
+    return contacts;
+  };
+
+  const onDeleteContact = removedId => {
+    setContacts(state => state.filter(contact => contact.id !== removedId));
+  };
+
+  const getFilterText = filterText => {
+    setFilter(filterText);
+  };
+
+  return (
+    <>
+      <ThemeProvider theme={theme}>
+        <Section>
+          <Title title="Phonebook" />
+          <ContactsForm onSubmit={onSubmitForm} />
+          <Title title="Contacts" />
+          <ContactsFilter filter={filter} onFilter={getFilterText} />
+          <ContactList
+            onDelete={onDeleteContact}
+            onFilter={onFilteredContacts}
+          />
+        </Section>
+        <GlobalStyle />
+      </ThemeProvider>
+    </>
+  );
 }
+export default App;

@@ -2,16 +2,19 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { List, ContactItem, DeleteButton } from './ContactList.styled';
 
-export const ContactList = ({ contacts, onDelete }) => {
+function ContactList ({  onFilter, onDelete }) {
+  const filteredContacts = onFilter();
 
   return (
     <List>
-      {contacts.map(({ name, number, id }) => {
+      {filteredContacts.map(({ name, number, id }) => {
         return (
           <ContactItem key={id}>
           <span>{name}:</span>
           <span>{number}</span>
-          <DeleteButton type='button' onClick={() => onDelete(id)}>
+          <DeleteButton 
+          type='button' 
+          onClick={() => onDelete(id)}>
             Remove
           </DeleteButton>
         </ContactItem>
@@ -22,12 +25,8 @@ export const ContactList = ({ contacts, onDelete }) => {
 };
 
 ContactList.propTypes = {
-  contacts: PropTypes.arrayOf(
-    PropTypes.shape({
-      id: PropTypes.string.isRequired,
-      name: PropTypes.string.isRequired,
-      number: PropTypes.string.isRequired,
-    }).isRequired
-  ),
+  onFilter: PropTypes.func.isRequired,
   onDelete: PropTypes.func.isRequired,
 };
+
+export default ContactList;

@@ -3,7 +3,7 @@ import { SectionWrapper } from './Section.styled';
 import PropTypes from 'prop-types';
 
 
-export const Section = ({ children }) => {
+export function Section ({ children }) {
     return (
         <SectionWrapper>
             {children}
