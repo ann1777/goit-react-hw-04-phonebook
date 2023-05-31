@@ -1,4 +1,4 @@
-# goit-react-hw-04-feedback
+# goit-react-hw-04-phonebook
 
 ## 2 - Книга контактів
 
