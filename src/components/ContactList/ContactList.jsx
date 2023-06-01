@@ -10,7 +10,7 @@ function ContactList ({  onFilter, onDelete }) {
       {filteredContacts.map(({ name, number, id }) => {
         return (
           <ContactItem key={id}>
-          <span>{name}:</span>
+          <span>{name} :</span>
           <span>{number}</span>
           <DeleteButton 
           type='button' 

@@ -28,20 +28,24 @@ function App() {
   }, [contacts]);
 
   const onSubmitForm = (submitName, submitNumber) => {
-    if (filter) {
-      contacts.filter(
-        contact => contact.name.toLowerCase() === submitName.toLowerCase())
-        } 
-        else return alert(`${submitName} is already in contacts.`);
-        setContacts(state => [
-          ...state,
-          {
-            id: nanoid(),
-            name: submitName,
-            number: submitNumber,
-          },
-        ]);
-    };
+    // if (filter) {
+    //   contacts.some(
+    //     contact =>
+    //       contact.name.toLowerCase().trim() ===
+    //         submitName.toLowerCase().trim() ||
+    //       contact.number.trim() === submitNumber.trim()
+    //   );
+    //   return alert(`${submitName} is already in contacts.`);
+    // }
+    setContacts(prevState => [
+      ...prevState,
+      {
+        id: nanoid(),
+        name: submitName,
+        number: submitNumber,
+      },
+    ]);
+  };
 
   const onFilteredContacts = () => {
     if (filter) {

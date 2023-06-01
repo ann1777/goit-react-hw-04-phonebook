@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React, { useState } from 'react';
 import { Formik } from 'formik';
 import { useForm } from 'react-hook-form';
-// import { nanoid } from 'nanoid';
+import { nanoid } from 'nanoid';
 
 import {
   Form,
@@ -13,26 +13,31 @@ import {
   ErrorMessage,
 } from './ContactsForm.styled';
 
-function ContactsForm({onSubmit }) {
+function ContactsForm({ contacts, newContact }) {
   const [name, setName] = useState('');
   const [number, setNumber] = useState('');
-  
+
   const { handleSubmit } = useForm({
-    defaultValues: {contacts: [], name: '', number: '' },
+    defaultValues: { contacts: [], name: '', number: '' },
   });
 
-  const onFormSubmit = ({ submitName, submitNumber }) => {
-    // if (
-    //   contacts.find(el => el.name.toLowerCase() === name.toLocaleLowerCase())
-    // ) {
-    //   return alert(`${name} is already in contacts.`);
-    // }
-    // this.props.addContact({
-    //   id: nanoid(),
-    //   name: submitName,
-    //   number: submitNumber,
-    // });
-    onSubmit(submitName, submitNumber);
+  const onFormSubmit = ({ name, number }) => {
+    if (
+      contacts.find(
+        contact => contact.name.toLowerCase() === name.toLowerCase()
+      )
+    ) {
+      return alert(`${name} is already in contacts.`);
+    }
+    this.props.addContact(state => [
+      ...state,
+      {
+        id: nanoid(),
+        name: name,
+        number: number,
+      },     
+    ]);
+    newContact(name, number);
     setName('');
     setNumber('');
   };
@@ -41,9 +46,21 @@ function ContactsForm({onSubmit }) {
     setName(e.target.value);
   };
 
-  const onInputChange= e => {
+  const onInputChange = e => {
     setNumber(e.target.value);
   };
+
+  // const onFormSubmit = e => {
+  //   e.preventDefault();
+  //   if (
+  //     contacts.filter(el => el.name.toLowerCase() === name.toLocaleLowerCase())
+  //   ) {
+  //     return alert(`${name} is already in contacts.`);
+  //   }
+  //   newContact(name, number);
+  //   setName('');
+  //   setNumber('');
+  // };
 
   return (
     <Formik>
@@ -82,10 +99,10 @@ function ContactsForm({onSubmit }) {
   );
 }
 
-ContactsForm.propType = { 
-  addContact: PropTypes.func.isRequired,
-  // setState: PropTypes.func.isRequired,
-  onSubmit: PropTypes.func.isRequired
- };
+ContactsForm.propType = {
+  newContact: PropTypes.func.isRequired,
+  contacts: PropTypes.array.isRequired,
+  onSubmit: PropTypes.func.isRequired,
+};
 
 export default ContactsForm;
