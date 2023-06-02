@@ -1,73 +1,46 @@
 import PropTypes from 'prop-types';
 import React, { useState } from 'react';
-import { Formik } from 'formik';
-import { useForm } from 'react-hook-form';
-import { nanoid } from 'nanoid';
 
 import {
   Form,
   FormField,
-  FieldFormik,
+  InputField,
   StyledButton,
   LabelWrapper,
   ErrorMessage,
 } from './ContactsForm.styled';
 
-function ContactsForm({ contacts, newContact }) {
+function ContactsForm({ contacts, onSubmit }) {
   const [name, setName] = useState('');
   const [number, setNumber] = useState('');
 
-  const { handleSubmit } = useForm({
-    defaultValues: { contacts: [], name: '', number: '' },
-  });
-
-  const onFormSubmit = ({ name, number }) => {
-    if (
-      contacts.find(
-        contact => contact.name.toLowerCase() === name.toLowerCase()
-      )
-    ) {
-      return alert(`${name} is already in contacts.`);
-    }
-    this.props.addContact(state => [
-      ...state,
-      {
-        id: nanoid(),
-        name: name,
-        number: number,
-      },     
-    ]);
-    newContact(name, number);
-    setName('');
-    setNumber('');
-  };
-
   const onNameChange = e => {
+    console.log(e.target.value)
     setName(e.target.value);
   };
 
   const onInputChange = e => {
+    console.log(e.target.value)
     setNumber(e.target.value);
   };
 
-  // const onFormSubmit = e => {
-  //   e.preventDefault();
-  //   if (
-  //     contacts.filter(el => el.name.toLowerCase() === name.toLocaleLowerCase())
-  //   ) {
-  //     return alert(`${name} is already in contacts.`);
-  //   }
-  //   newContact(name, number);
-  //   setName('');
-  //   setNumber('');
-  // };
+  const handleSubmit = () => {
+    if (
+      contacts.find(el => el.name.toLowerCase() === name.toLowerCase())
+    ) {
+      return alert(`${name} is already in contacts.`);
+    }
+    onSubmit(name, number);
+    setName('');
+    setNumber('');
+  };
 
   return (
-    <Formik>
-      <Form onSubmit={handleSubmit(onFormSubmit)}>
+    <>
+      <Form onSubmit={handleSubmit}>
         <FormField htmlFor="name">
           <LabelWrapper>Name:</LabelWrapper>
-          <FieldFormik
+          <InputField
             type="text"
             name="name"
             placeholder="name"
@@ -81,7 +54,7 @@ function ContactsForm({ contacts, newContact }) {
         </FormField>
         <FormField htmlFor="number">
           <LabelWrapper>Number:</LabelWrapper>
-          <FieldFormik
+          <InputField
             type="phone"
             name="number"
             placeholder="tel number"
@@ -95,7 +68,7 @@ function ContactsForm({ contacts, newContact }) {
         </FormField>
         <StyledButton type="submit">AddContact</StyledButton>
       </Form>
-    </Formik>
+    </>
   );
 }
 

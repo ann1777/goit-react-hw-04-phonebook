@@ -28,6 +28,7 @@ function App() {
   }, [contacts]);
 
   const onSubmitForm = (submitName, submitNumber) => {
+    console.log(submitName, submitNumber)
     // if (filter) {
     //   contacts.some(
     //     contact =>
@@ -69,7 +70,7 @@ function App() {
       <ThemeProvider theme={theme}>
         <Section>
           <Title title="Phonebook" />
-          <ContactsForm onSubmit={onSubmitForm} />
+          <ContactsForm onSubmit={onSubmitForm} contacts={contacts}/>
           <Title title="Contacts" />
           <ContactsFilter filter={filter} onFilter={getFilterText} />
           <ContactList
